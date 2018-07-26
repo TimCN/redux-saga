@@ -1,38 +1,44 @@
-/* eslint-disable react/no-deprecated, react/no-string-refs, react/no-unescaped-entities, react/jsx-no-target-blank */
-import React, { Component } from 'react'
+import * as React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { navigate, resetErrorMessage, updateRouterState } from '../actions'
 import Explore from '../components/Explore'
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-    this.handleChange = this.handleChange.bind(this)
-    this.handleDismissClick = this.handleDismissClick.bind(this)
+class App extends React.Component {
+  static propTypes = {
+    // Injected by React Redux
+    errorMessage: PropTypes.string,
+    inputValue: PropTypes.string.isRequired,
+    navigate: PropTypes.func.isRequired,
+    updateRouterState: PropTypes.func.isRequired,
+    resetErrorMessage: PropTypes.func.isRequired,
+    // Injected by React Router
+    children: PropTypes.node,
+    location: PropTypes.any,
+    params: PropTypes.any,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.updateRouterState({
       pathname: this.props.location.pathname,
       params: this.props.params,
     })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.location.pathname !== nextProps.location.pathname)
+  componentDidUpdate(prevProps) {
+    if (this.props.location.pathname !== prevProps.location.pathname)
       this.props.updateRouterState({
-        pathname: nextProps.location.pathname,
-        params: nextProps.params,
+        pathname: this.props.location.pathname,
+        params: this.props.params,
       })
   }
 
-  handleDismissClick(e) {
+  handleDismissClick = e => {
     this.props.resetErrorMessage()
     e.preventDefault()
   }
 
-  handleChange(nextValue) {
+  handleChange = nextValue => {
     this.props.navigate(`/${nextValue}`)
   }
 
@@ -55,26 +61,13 @@ class App extends Component {
     const { children, inputValue } = this.props
     return (
       <div>
-        <Explore value={inputValue} onChange={this.handleChange} />
+        <Explore key={inputValue} defaultInputValue={inputValue} onChange={this.handleChange} />
         <hr />
         {this.renderErrorMessage()}
         {children}
       </div>
     )
   }
-}
-
-App.propTypes = {
-  // Injected by React Redux
-  errorMessage: PropTypes.string,
-  inputValue: PropTypes.string.isRequired,
-  navigate: PropTypes.func.isRequired,
-  updateRouterState: PropTypes.func.isRequired,
-  resetErrorMessage: PropTypes.func.isRequired,
-  // Injected by React Router
-  children: PropTypes.node,
-  location: PropTypes.any,
-  params: PropTypes.any,
 }
 
 function mapStateToProps(state) {

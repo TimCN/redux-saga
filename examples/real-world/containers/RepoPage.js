@@ -1,5 +1,4 @@
-/* eslint-disable react/no-deprecated, react/no-string-refs, react/no-unescaped-entities, react/jsx-no-target-blank */
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { loadRepoPage, loadMoreStargazers } from '../actions'
 import Repo from '../components/Repo'
@@ -7,30 +6,33 @@ import User from '../components/User'
 import List from '../components/List'
 import PropTypes from 'prop-types'
 
-class RepoPage extends Component {
-  constructor(props) {
-    super(props)
-    this.renderUser = this.renderUser.bind(this)
-    this.handleLoadMoreClick = this.handleLoadMoreClick.bind(this)
+class RepoPage extends React.Component {
+  static propTypes = {
+    repo: PropTypes.object,
+    fullName: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    owner: PropTypes.object,
+    stargazers: PropTypes.array.isRequired,
+    stargazersPagination: PropTypes.object,
+    loadRepoPage: PropTypes.func.isRequired,
+    loadMoreStargazers: PropTypes.func.isRequired,
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.loadRepoPage(this.props.fullName)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.fullName !== this.props.fullName) {
-      this.props.loadRepoPage(nextProps.fullName)
+  componentDidUpdate(prevProps) {
+    if (prevProps.fullName !== this.props.fullName) {
+      this.props.loadRepoPage(this.props.fullName)
     }
   }
 
-  handleLoadMoreClick() {
-    // eslint-disable-next-line no-console
-    console.log('load more', this.props.loadMoreStargazers)
+  handleLoadMoreClick = () => {
     this.props.loadMoreStargazers(this.props.fullName)
   }
 
-  renderUser(user) {
+  renderUser = user => {
     return <User user={user} key={user.login} />
   }
 
@@ -59,17 +61,6 @@ class RepoPage extends Component {
       </div>
     )
   }
-}
-
-RepoPage.propTypes = {
-  repo: PropTypes.object,
-  fullName: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  owner: PropTypes.object,
-  stargazers: PropTypes.array.isRequired,
-  stargazersPagination: PropTypes.object,
-  loadRepoPage: PropTypes.func.isRequired,
-  loadMoreStargazers: PropTypes.func.isRequired,
 }
 
 function mapStateToProps(state) {
