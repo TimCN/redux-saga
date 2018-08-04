@@ -77,7 +77,7 @@ test('saga middleware monitoring', assert => {
   store.dispatch(storeAction)
 
   const task = sagaMiddleware.run(main)
-  task.done.catch(err => assert.fail(err))
+  task.done().catch(err => assert.fail(err))
 
   setTimeout(() => {
 
@@ -162,7 +162,7 @@ test('runSaga monitoring', assert => {
 
   const iterator = main()
   const task = runSaga(iterator, {subscribe, dispatch, sagaMonitor})
-  task.done.catch(err => assert.fail(err))
+  task.done().catch(err => assert.fail(err))
 
   dispatch(storeAction)
 
@@ -241,7 +241,7 @@ test('saga monitors without all functions', assert => {
   store.dispatch(storeAction)
 
   const task = sagaMiddleware.run(main)
-  task.done.catch(err => assert.fail(err))
+  task.done().catch(err => assert.fail(err))
 
   setTimeout(() => {
     // did we survive?

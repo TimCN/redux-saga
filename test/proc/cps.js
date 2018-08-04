@@ -21,7 +21,7 @@ test('processor cps call handling', assert => {
     }
   }
 
-  proc(genFn()).done.catch(err => assert.fail(err))
+  proc(genFn()).done().catch(err => assert.fail(err))
 
   const expected = ['call 1', 'call err'];
 
@@ -66,7 +66,7 @@ test('processor synchronous cps failures handling', assert => {
     }
   }
 
-  proc(genFnParent(),undefined,dispatch).done.catch(err => assert.fail(err))
+  proc(genFnParent(),undefined,dispatch).done().catch(err => assert.fail(err))
 
 
   const expected = ['start parent','startChild','failure child','success parent'];
@@ -94,11 +94,11 @@ test('processor cps cancellation handling', assert => {
     yield io.cancel(task);
   }
 
-  proc(genFn(), undefined).done.then(() => {
+  proc(genFn(), undefined).done().then(() => {
     assert.true(cancelled, "processor should call cancellation function on callback");
     assert.end();
   }).catch(err => {
     assert.fail(err);
-    assert.done();
+    assert.done()();
   });
 });

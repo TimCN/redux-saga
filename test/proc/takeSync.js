@@ -326,7 +326,7 @@ test('inter-saga put/take handling (via buffered channel)', assert => {
     ]
   }
 
-  middleware.run(root).done.then(() => {
+  middleware.run(root).done().then(() => {
     assert.deepEqual(actual, [1,2,3],
       "Sagas must take actions from each other (via buffered channel)"
     );
@@ -458,7 +458,7 @@ test('inter-saga send/aknowledge handling (via buffered channel)', assert => {
 
 
 
-  middleware.run(root).done.then(() => {
+  middleware.run(root).done().then(() => {
     assert.deepEqual(actual, ['msg-1', 'ack-1', 'msg-2', 'ack-2'],
       "Sagas must take actions from each other (via buffered channel) in the right order"
     );
@@ -510,7 +510,7 @@ test('inter-saga fork/take back from forked child', assert => {
     yield put({type: 'TEST'})
   }
 
-  middleware.run(root).done.then(() => {
+  middleware.run(root).done().then(() => {
     assert.deepEqual(actual, [1,2,3],
       "Sagas must take actions from each forked childs doing Sync puts"
     );
@@ -564,7 +564,7 @@ test('inter-saga fork/take back from forked child', assert => {
     yield put({type: 'TEST'})
   }
 
-  middleware.run(root).done.then(() => {
+  middleware.run(root).done().then(() => {
     assert.deepEqual(actual, [1,2,3],
       "Sagas must take actions from each forked childs doing Sync puts"
     );
@@ -633,7 +633,7 @@ test('inter-saga fork/take back from forked child 3', assert => {
     actual.push(1)
   }
 
-  middleware.run(root).done.then(() => {
+  middleware.run(root).done().then(() => {
     assert.deepEqual(actual, [1,1],
       "Sagas must take actions from each forked childs doing Sync puts"
     );

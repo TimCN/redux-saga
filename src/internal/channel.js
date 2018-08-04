@@ -108,9 +108,7 @@ export function channel(buffer = buffers.fixed()) {
     }
   }
 
-  return {take, put, flush, close,
-    get __takers__() { return takers },
-    get __closed__() { return closed }
+  return {take, put, flush, close, "__takers__": takers, "__closed__": closed
   }
 }
 

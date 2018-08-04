@@ -20,7 +20,7 @@ test('proc logging', assert => {
     logger: (level, ...args) => {
       actual = [level, args.join(' ')]
     }
-  }).done.catch(
+  }).done().catch(
     err => {
       assert.equal(actual[0], 'error', 'proc must log using provided logger')
       assert.ok(actual[1].indexOf(err.message) >= 0, 'proc must log using provided logger')

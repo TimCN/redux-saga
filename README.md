@@ -12,15 +12,18 @@ You might've used `redux-thunk` before to handle your data fetching. Contrary to
 
 # Getting started
 
+Only do the ie8 compatible on branch v0.14.0.
+
 ## Install
 
+
 ```sh
-$ npm install --save redux-saga
+$ npm install --save redux-saga-ie
 ```
 or
 
 ```sh
-$ yarn add redux-saga
+$ yarn add redux-saga-ie
 ```
 
 Alternatively, you may use the provided UMD builds directly in the `<script>` tag of an HTML page. See [this section](#using-umd-build-in-the-browser).

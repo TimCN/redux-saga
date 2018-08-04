@@ -31,21 +31,21 @@ test('proc fork handling: generators', assert => {
     task2 = yield io.fork([inst, inst.gen])
   }
 
-  proc(genFn()).done.catch(err => assert.fail(err))
+  proc(genFn()).done().catch(err => assert.fail(err))
 
   setTimeout(() => {
 
     assert.equal(task.name, 'subGen',
       'fork result must include the name of the forked generator function'
     ),
-    assert.equal(is.promise(task.done), true,
+    assert.equal(is.promise(task.done()), true,
       'fork result must include the promise of the task result'
     ),
-    task.done.then(res => assert.equal(res, 1,
+    task.done().then(res => assert.equal(res, 1,
       'fork result must resolve with the return value of the forked task'
     ))
 
-    task2.done.then(res => assert.equal(res, 2,
+    task2.done().then(res => assert.equal(res, 2,
       'fork must also handle generators defined as instance methods'
     ))
 
@@ -81,7 +81,7 @@ test('proc join handling : generators', assert => {
     actual.push( yield io.join(task)  )
   }
 
-  proc(genFn(), input).done.catch(err => assert.fail(err))
+  proc(genFn(), input).done().catch(err => assert.fail(err))
   const expected = [true, {type: 'action-1'}, 1]
 
   setTimeout(() => {
@@ -120,7 +120,7 @@ test('proc fork/join handling : functions', assert => {
     actual.push( yield io.join(syncTask)  )
   }
 
-  proc(genFn()).done.catch(err => assert.fail(err))
+  proc(genFn()).done().catch(err => assert.fail(err))
   const expected = [true, 2, 'sync']
 
   setTimeout(() => {
@@ -175,7 +175,7 @@ test('proc fork wait for attached children', assert => {
     actual.push(idx)
   }
 
-  proc(root()).done.then(() => {
+  proc(root()).done().then(() => {
     assert.deepEqual(actual, [0,2,3,1], 'parent task must wait for all forked tasks before terminating')
   }).catch(err => assert.fail(err))
 
@@ -258,7 +258,7 @@ test('proc auto cancel forks on error', assert => {
     'childA resolved', 'leaf 1 resolved', 'childB resolved', 'leaf 2 resolved', 'main error',
     'leaf 3 cancelled', 'leaf 4 cancelled', 'root caught main error'
   ]
-  proc(root()).done.then(() => {
+  proc(root()).done().then(() => {
     assert.deepEqual(actual, expected, 'parent task must cancel all forked tasks when it aborts')
   }).catch(err => assert.fail(err))
 
@@ -342,7 +342,7 @@ test('proc auto cancel forks on main cancelled', assert => {
     'childA resolved', 'leaf 1 resolved', 'childB resolved', 'leaf 2 resolved', 'root resolved',
     'main cancelled', 'leaf 3 cancelled', 'leaf 4 cancelled'
   ]
-  proc(root()).done.then(() => {
+  proc(root()).done().then(() => {
     assert.deepEqual(actual, expected, 'parent task must cancel all forked tasks when it\'s cancelled')
   }).catch(err => assert.fail(err))
 
@@ -433,7 +433,7 @@ test('proc auto cancel forks if a child aborts', assert => {
     'childA resolved', 'leaf 1 resolved', 'childB resolved', 'leaf 2 resolved', 'main resolved',
     'leaf 3 error', 'leaf 4 cancelled', 'root caught leaf 3 error'
   ]
-  proc(root()).done.then(() => {
+  proc(root()).done().then(() => {
     assert.deepEqual(actual, expected, 'parent task must cancel all forked tasks when it aborts')
   }).catch(err => assert.fail(err))
 })
@@ -526,7 +526,7 @@ test('proc auto cancel parent + forks if a child aborts', assert => {
     'childA resolved', 'leaf 1 resolved', 'childB resolved', 'leaf 2 resolved',
     'leaf 3 error', 'leaf 4 cancelled', 'main cancelled', 'root caught leaf 3 error'
   ]
-  proc(root()).done.then(() => {
+  proc(root()).done().then(() => {
     assert.deepEqual(actual, expected, 'parent task must cancel all forked tasks when it aborts')
   }).catch(err => assert.fail(err))
 })

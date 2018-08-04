@@ -17,7 +17,7 @@ test('proc onError is optional', assert => {
   }
 
   proc(main(), undefined, noop, noop, {
-  }).done.catch(
+  }).done().catch(
     err => {
       assert.equal(err, expectedError, 'proc does not blow up without onError')
     }
@@ -43,7 +43,7 @@ test('proc onError is called for uncaught error', assert => {
     onError: (err) => {
       actual = err
     }
-  }).done.catch(
+  }).done().catch(
     err => {
       assert.equal(actual, expectedError, 'proc must call onError handler')
     }
@@ -74,7 +74,7 @@ test('proc onError is not called for caught errors', assert => {
     onError: (err) => {
       actual = err
     }
-  }).done.then(() => {
+  }).done().then(() => {
     assert.equal(actual, undefined, 'proc must not call onError')
     assert.equal(caught, expectedError, 'parent must catch error')
   })

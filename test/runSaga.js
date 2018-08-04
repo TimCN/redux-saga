@@ -56,13 +56,13 @@ test('runSaga', assert => {
     {type: 'ACTION-3'}, 'ACTION-3'
   ]
 
-  task.done.then(() =>
+  task.done().then(() =>
     assert.deepEqual(actual, expected,
       'runSaga must connect the provided iterator to the store, and run it'
     )
   )
 
-  task.done.catch(err => assert.fail(err))
+  task.done().catch(err => assert.fail(err))
 })
 
 test('put causing sync dispatch response in store-like subscriber', assert => {

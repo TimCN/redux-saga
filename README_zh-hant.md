@@ -45,7 +45,7 @@ Redux 應用程式的另一種 Side Effect 模型。代替 redux-thunk 發送的
 安裝
 
 ```
-npm install redux-saga
+npm install redux-saga-ie
 ```
 
 創造 Saga（採用 Redux 的計數器範例）

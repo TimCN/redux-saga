@@ -22,7 +22,7 @@ test('proc flush handling', assert => {
     actual.push(yield io.flush(chan))
   }
 
-  proc(genFn()).done.catch(err => assert.fail(err))
+  proc(genFn()).done().catch(err => assert.fail(err))
 
   const expected = [
     [],

@@ -43,7 +43,7 @@ test('processor nested iterator handling', assert => {
     }
   }
 
-  proc(main(), input).done.catch(err => assert.fail(err))
+  proc(main(), input).done().catch(err => assert.fail(err))
 
   const expected = [1, {type: 'action-1'}, 2, {type: 'action-2'}, 3, {type: 'action-3'}, 'caught child error'];
 

@@ -59,86 +59,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.utils = exports.effects = exports.CANCEL = exports.delay = exports.throttle = exports.takeLatest = exports.takeEvery = exports.buffers = exports.channel = exports.eventChannel = exports.END = exports.runSaga = undefined;
-
-	var _runSaga = __webpack_require__(10);
-
-	Object.defineProperty(exports, 'runSaga', {
-	  enumerable: true,
-	  get: function get() {
-	    return _runSaga.runSaga;
-	  }
-	});
-
-	var _channel = __webpack_require__(2);
-
-	Object.defineProperty(exports, 'END', {
-	  enumerable: true,
-	  get: function get() {
-	    return _channel.END;
-	  }
-	});
-	Object.defineProperty(exports, 'eventChannel', {
-	  enumerable: true,
-	  get: function get() {
-	    return _channel.eventChannel;
-	  }
-	});
-	Object.defineProperty(exports, 'channel', {
-	  enumerable: true,
-	  get: function get() {
-	    return _channel.channel;
-	  }
-	});
-
-	var _buffers = __webpack_require__(3);
-
-	Object.defineProperty(exports, 'buffers', {
-	  enumerable: true,
-	  get: function get() {
-	    return _buffers.buffers;
-	  }
-	});
-
-	var _sagaHelpers = __webpack_require__(6);
-
-	Object.defineProperty(exports, 'takeEvery', {
-	  enumerable: true,
-	  get: function get() {
-	    return _sagaHelpers.takeEvery;
-	  }
-	});
-	Object.defineProperty(exports, 'takeLatest', {
-	  enumerable: true,
-	  get: function get() {
-	    return _sagaHelpers.takeLatest;
-	  }
-	});
-	Object.defineProperty(exports, 'throttle', {
-	  enumerable: true,
-	  get: function get() {
-	    return _sagaHelpers.throttle;
-	  }
-	});
-
-	var _utils = __webpack_require__(1);
-
-	Object.defineProperty(exports, 'delay', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.delay;
-	  }
-	});
-	Object.defineProperty(exports, 'CANCEL', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.CANCEL;
-	  }
-	});
+	exports.CANCEL = exports.delay = exports.throttle = exports.takeLatest = exports.takeEvery = exports.buffers = exports.channel = exports.eventChannel = exports.END = exports.runSaga = exports.utils = exports.effects = undefined;
 
 	var _middleware = __webpack_require__(9);
 
 	var _middleware2 = _interopRequireDefault(_middleware);
+
+	var _runSaga = __webpack_require__(10);
+
+	var _channel = __webpack_require__(2);
+
+	var _buffers = __webpack_require__(3);
+
+	var _sagaHelpers = __webpack_require__(6);
+
+	var _utils = __webpack_require__(1);
 
 	var _effects = __webpack_require__(8);
 
@@ -155,6 +90,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = _middleware2.default;
 	exports.effects = effects;
 	exports.utils = utils;
+	exports.runSaga = _runSaga.runSaga;
+	exports.END = _channel.END;
+	exports.eventChannel = _channel.eventChannel;
+	exports.channel = _channel.channel;
+	exports.buffers = _buffers.buffers;
+	exports.takeEvery = _sagaHelpers.takeEvery;
+	exports.takeLatest = _sagaHelpers.takeLatest;
+	exports.throttle = _sagaHelpers.throttle;
+	exports.delay = _utils.delay;
+	exports.CANCEL = _utils.CANCEL;
 
 /***/ },
 /* 1 */
@@ -522,13 +467,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }
 
-	  return { take: take, put: put, flush: flush, close: close,
-	    get __takers__() {
-	      return takers;
-	    },
-	    get __closed__() {
-	      return closed;
-	    }
+	  return { take: take, put: put, flush: flush, close: close, "__takers__": takers, "__closed__": closed
 	  };
 	}
 
@@ -1002,8 +941,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _channel = __webpack_require__(2);
 
 	var _buffers = __webpack_require__(3);
-
-	function _defineEnumerableProperties(obj, descs) { for (var key in descs) { var desc = descs[key]; desc.configurable = desc.enumerable = true; if ("value" in desc) desc.writable = true; Object.defineProperty(obj, key, desc); } return obj; }
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -1502,17 +1439,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // catch synchronous failures; see #152
 	    try {
-	      (function () {
-	        var cpsCb = function cpsCb(err, res) {
-	          return _utils.is.undef(err) ? cb(res) : cb(err, true);
+	      var cpsCb = function cpsCb(err, res) {
+	        return _utils.is.undef(err) ? cb(res) : cb(err, true);
+	      };
+	      fn.apply(context, args.concat(cpsCb));
+	      if (cpsCb.cancel) {
+	        cb.cancel = function () {
+	          return cpsCb.cancel();
 	        };
-	        fn.apply(context, args.concat(cpsCb));
-	        if (cpsCb.cancel) {
-	          cb.cancel = function () {
-	            return cpsCb.cancel();
-	          };
-	        }
-	      })();
+	      }
 	    } catch (error) {
 	      return cb(error, true);
 	    }
@@ -1550,13 +1485,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  function runJoinEffect(t, cb) {
 	    if (t.isRunning()) {
-	      (function () {
-	        var joiner = { task: task, cb: cb };
-	        cb.cancel = function () {
-	          return (0, _utils.remove)(t.joiners, joiner);
-	        };
-	        t.joiners.push(joiner);
-	      })();
+	      var joiner = { task: task, cb: cb };
+	      cb.cancel = function () {
+	        return (0, _utils.remove)(t.joiners, joiner);
+	      };
+	      t.joiners.push(joiner);
 	    } else {
 	      t.isAborted() ? cb(t.error(), true) : cb(t.result());
 	    }
@@ -1690,10 +1623,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  function newTask(id, name, iterator, cont) {
-	    var _done, _ref9, _mutatorMap;
+	    var _ref9;
 
 	    iterator._deferredEnd = null;
-	    return _ref9 = {}, _defineProperty(_ref9, _utils.TASK, true), _defineProperty(_ref9, 'id', id), _defineProperty(_ref9, 'name', name), _done = 'done', _mutatorMap = {}, _mutatorMap[_done] = _mutatorMap[_done] || {}, _mutatorMap[_done].get = function () {
+	    return _ref9 = {}, _defineProperty(_ref9, _utils.TASK, true), _defineProperty(_ref9, 'id', id), _defineProperty(_ref9, 'name', name), _defineProperty(_ref9, 'done', function done() {
 	      if (iterator._deferredEnd) {
 	        return iterator._deferredEnd.promise;
 	      } else {
@@ -1704,7 +1637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        return def.promise;
 	      }
-	    }, _defineProperty(_ref9, 'cont', cont), _defineProperty(_ref9, 'joiners', []), _defineProperty(_ref9, 'cancel', cancel), _defineProperty(_ref9, 'isRunning', function isRunning() {
+	    }), _defineProperty(_ref9, 'cont', cont), _defineProperty(_ref9, 'joiners', []), _defineProperty(_ref9, 'cancel', cancel), _defineProperty(_ref9, 'isRunning', function isRunning() {
 	      return iterator._isRunning;
 	    }), _defineProperty(_ref9, 'isCancelled', function isCancelled() {
 	      return iterator._isCancelled;
@@ -1714,7 +1647,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return iterator._result;
 	    }), _defineProperty(_ref9, 'error', function error() {
 	      return iterator._error;
-	    }), _defineEnumerableProperties(_ref9, _mutatorMap), _ref9;
+	    }), _ref9;
 	  }
 	}
 
@@ -1974,117 +1907,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.throttle = exports.takeLatest = exports.takeEvery = exports.flush = exports.cancelled = exports.actionChannel = exports.select = exports.cancel = exports.join = exports.spawn = exports.fork = exports.cps = exports.apply = exports.call = exports.race = exports.put = exports.takem = exports.take = undefined;
 
 	var _io = __webpack_require__(4);
 
-	Object.defineProperty(exports, 'take', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.take;
-	  }
-	});
-	Object.defineProperty(exports, 'takem', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.takem;
-	  }
-	});
-	Object.defineProperty(exports, 'put', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.put;
-	  }
-	});
-	Object.defineProperty(exports, 'race', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.race;
-	  }
-	});
-	Object.defineProperty(exports, 'call', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.call;
-	  }
-	});
-	Object.defineProperty(exports, 'apply', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.apply;
-	  }
-	});
-	Object.defineProperty(exports, 'cps', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.cps;
-	  }
-	});
-	Object.defineProperty(exports, 'fork', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.fork;
-	  }
-	});
-	Object.defineProperty(exports, 'spawn', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.spawn;
-	  }
-	});
-	Object.defineProperty(exports, 'join', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.join;
-	  }
-	});
-	Object.defineProperty(exports, 'cancel', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.cancel;
-	  }
-	});
-	Object.defineProperty(exports, 'select', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.select;
-	  }
-	});
-	Object.defineProperty(exports, 'actionChannel', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.actionChannel;
-	  }
-	});
-	Object.defineProperty(exports, 'cancelled', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.cancelled;
-	  }
-	});
-	Object.defineProperty(exports, 'flush', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.flush;
-	  }
-	});
-	Object.defineProperty(exports, 'takeEvery', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.takeEvery;
-	  }
-	});
-	Object.defineProperty(exports, 'takeLatest', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.takeLatest;
-	  }
-	});
-	Object.defineProperty(exports, 'throttle', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.throttle;
-	  }
-	});
+	exports.take = _io.take;
+	exports.takem = _io.takem;
+	exports.put = _io.put;
+	exports.race = _io.race;
+	exports.call = _io.call;
+	exports.apply = _io.apply;
+	exports.cps = _io.cps;
+	exports.fork = _io.fork;
+	exports.spawn = _io.spawn;
+	exports.join = _io.join;
+	exports.cancel = _io.cancel;
+	exports.select = _io.select;
+	exports.actionChannel = _io.actionChannel;
+	exports.cancelled = _io.cancelled;
+	exports.flush = _io.flush;
+	exports.takeEvery = _io.takeEvery;
+	exports.takeLatest = _io.takeLatest;
+	exports.throttle = _io.throttle;
 
 /***/ },
 /* 9 */
@@ -2245,69 +2089,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.CHANNEL_END = exports.asEffect = exports.createMockTask = exports.arrayOfDeffered = exports.deferred = exports.is = exports.noop = exports.SAGA_ACTION = exports.TASK = undefined;
 
 	var _utils = __webpack_require__(1);
 
-	Object.defineProperty(exports, 'TASK', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.TASK;
-	  }
-	});
-	Object.defineProperty(exports, 'SAGA_ACTION', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.SAGA_ACTION;
-	  }
-	});
-	Object.defineProperty(exports, 'noop', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.noop;
-	  }
-	});
-	Object.defineProperty(exports, 'is', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.is;
-	  }
-	});
-	Object.defineProperty(exports, 'deferred', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.deferred;
-	  }
-	});
-	Object.defineProperty(exports, 'arrayOfDeffered', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.arrayOfDeffered;
-	  }
-	});
-	Object.defineProperty(exports, 'createMockTask', {
-	  enumerable: true,
-	  get: function get() {
-	    return _utils.createMockTask;
-	  }
-	});
-
 	var _io = __webpack_require__(4);
-
-	Object.defineProperty(exports, 'asEffect', {
-	  enumerable: true,
-	  get: function get() {
-	    return _io.asEffect;
-	  }
-	});
 
 	var _channel = __webpack_require__(2);
 
-	Object.defineProperty(exports, 'CHANNEL_END', {
-	  enumerable: true,
-	  get: function get() {
-	    return _channel.CHANNEL_END;
-	  }
-	});
+	exports.TASK = _utils.TASK;
+	exports.SAGA_ACTION = _utils.SAGA_ACTION;
+	exports.noop = _utils.noop;
+	exports.is = _utils.is;
+	exports.deferred = _utils.deferred;
+	exports.arrayOfDeffered = _utils.arrayOfDeffered;
+	exports.createMockTask = _utils.createMockTask;
+	exports.asEffect = _io.asEffect;
+	exports.CHANNEL_END = _channel.CHANNEL_END;
 
 /***/ }
 /******/ ])

@@ -39,7 +39,7 @@ test('proc iteration', assert => {
   }
 
   const iterator = genFn()
-  const endP = proc(iterator).done.catch(err => assert.fail(err))
+  const endP = proc(iterator).done().catch(err => assert.fail(err))
   assert.equal(is.promise(endP), true,
   'proc should return a promise of the iterator result'
   )
@@ -72,7 +72,7 @@ test('proc error handling', assert => {
     fnThrow()
   }
 
-  proc(genThrow()).done.then(
+  proc(genThrow()).done().then(
     () => assert.fail('proc must return a rejected promise if generator throws an uncaught error'),
     err => assert.equal(err, 'error', 'proc must return a rejected promise if generator throws an uncaught error')
   )
@@ -93,7 +93,7 @@ test('proc error handling', assert => {
 
   }
 
-  proc(genFinally()).done.then(
+  proc(genFinally()).done().then(
     () => assert.deepEqual(actual, ['caught-error', 'finally'], 'proc must route to catch/finally blocks in the generator'),
     () => assert.fail('proc must route to catch/finally blocks in the generator')
   )
@@ -111,7 +111,7 @@ test('processor output handling', assert => {
     yield io.put(2)
   }
 
-  proc(genFn('arg'), undefined, dispatch).done.catch(err => assert.fail(err))
+  proc(genFn('arg'), undefined, dispatch).done().catch(err => assert.fail(err))
 
   const expected = ['arg', 2];
   setTimeout(() => {

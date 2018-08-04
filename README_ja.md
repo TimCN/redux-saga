@@ -15,7 +15,7 @@ ES6 の Generator 関数を使うことで読み書きしやすく、テスト�
 ## インストール
 
 ```sh
-$ npm install --save redux-saga
+$ npm install --save redux-saga-ie
 ```
 
 別の方法として、UMD ビルドを HTML ページの `<script>` タグで直接使うこともできます。詳しくは[こちら](#ブラウザで-umd-ビルドを使用する).
